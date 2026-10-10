@@ -1,8 +1,8 @@
-#import "@preview/latexy-book:0.0.1": book, frontmatter, mainmatter, appendix, backmatter, definition, theorem, assumption, proposition, lemma, corollary, exercise, example, notice, code, citep, citet, subfigure, mode-wheel
+#import "@preview/latexy-book:0.0.2": book, frontmatter, mainmatter, appendix, backmatter, definition, theorem, assumption, proposition, lemma, corollary, exercise, example, notice, code, citep, citet, subfigure, mode-wheel
 /* 
 If you are sure you want to import all the macros and not conflict with other packages, uncomment the line below.
 
-#import "@preview/latexy-book:0.0.1": *
+#import "@preview/latexy-book:0.0.2": *
 */
 #show: book.with(
   title: "Book Title",
@@ -61,7 +61,20 @@ If you are sure you want to import all the macros and not conflict with other pa
 #lorem(50)
 
 ===== Subsubsection 1.1.1.1
+
+
+=== Text
 #lorem(50)
+
+#strong[XXX], #emph[XXX]
+
+#highlight[XXX]
+
+#underline[XXX], #overline[XXX], #strike[XXX]
+
+X#sub[XXX], X#super[XXX]
+
+#link("https://www.google.com")[Google]
 
 
 #pagebreak()
