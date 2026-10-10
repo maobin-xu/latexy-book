@@ -226,35 +226,43 @@
   location: none,
   width-cache: (:),
 ) = {
+  let cc = chapter-counter.at(location).first()
   let mid-gap = 0.5em
   if book-part in ("frontmatter", "backmatter") and level == 1 { mid-gap = 0em }
+
+  let chapter-level = if book-part == "mainmatter" { 2 } else if book-part == "appendix" { 1 } else { none }
+
+  let cache-key(bp, lvl, c) = {
+    let is-chapter = if chapter-level != none { lvl == chapter-level } else { false }
+    if is-chapter { bp + "|" + str(lvl) } else { bp + "|" + str(c) + "|" + str(lvl) }
+  }
 
   let left-margin = 0em
   if book-part == "frontmatter" and level >= 2 {
     for pl in range(1, level) {
-      let w = width-cache.at("mainmatter|" + str(pl), default: 0em)
+      let w = width-cache.at(cache-key("mainmatter", pl, cc), default: 0em)
       left-margin += w + mid-gap
     }
   } else if book-part == "mainmatter" and level >= 3 {
     for pl in range(2, level) {
-      let w = width-cache.at(book-part + "|" + str(pl), default: 0em)
+      let w = width-cache.at(cache-key(book-part, pl, cc), default: 0em)
       left-margin += w + mid-gap
     }
   } else if book-part == "appendix" and level >= 2 {
     for pl in range(1, level) {
-      let w = width-cache.at(book-part + "|" + str(pl), default: 0em)
+      let w = width-cache.at(cache-key(book-part, pl, cc), default: 0em)
       left-margin += w + mid-gap
     }
   } else if book-part == "backmatter" and level >= 2 {
     for pl in range(1, level) {
-      let w = width-cache.at("appendix|" + str(pl), default: 0em)
+      let w = width-cache.at(cache-key("appendix", pl, cc), default: 0em)
       left-margin += w + mid-gap
     }
   }
 
   let number-fill = 0em
   if book-part in ("mainmatter", "appendix") {
-    let key = book-part + "|" + str(level)
+    let key = cache-key(book-part, level, cc)
     number-fill = width-cache.at(key, default: measure([#number]).width) - measure([#number]).width
   }
 
@@ -264,7 +272,7 @@
   } else { "regular" }
   let text-fill = if level > 1 { h(0.25em) + [.] + h(0.25em) } else { none }
   let spacing-top = if book-part == "mainmatter" {
-    if level == 1 { 1.5em } else if level == 2 { 0.5em } else { 0em }
+    if level <= 2 { 0.5em } else { 0em }
   } else if book-part != "mainmatter" and level == 1 { 0.5em } else { 0em }
 
   set par(first-line-indent: 0pt)
@@ -370,7 +378,7 @@
             } else { body }
           ]
         } else {
-          block(inset: (x: 0.75em, y: 1em))[
+          block(width: 100%, inset: (x: 0.75em, y: 1em))[
             #text(weight: "bold", fill: black)[#header-text]
             #body
           ]
@@ -431,6 +439,17 @@
   type: "notice", type-name: "Notice",
   box-color: rgb("#cccccc"), background-color: rgb("#f5f5f5"), ..args,
 )
+
+#let proof(body) = {
+  block(width: 100%)[
+    #par(first-line-indent: 0pt)[
+      #text(style: "italic")[Proof.]
+    ]
+    #body
+    #h(1fr) $square$
+  ]
+}
+
 
 // ============================================================
 // Code
@@ -507,6 +526,7 @@
   set par(
     justify: true,
     leading: 1.5em,
+    spacing: 1.5em,
     first-line-indent: (amount: 2em, all: true),
   )
   set text(
@@ -514,21 +534,36 @@
     font: ((name: "Libertinus Serif", covers: "latin-in-cjk"), "Noto Serif SC"),
     size: 12pt,
   )
+  show smartquote: set text(font: "Libertinus Serif")
 
   // --- Math ---
-  set math.equation(numbering: (..nums) => context {
-    equation-numbering-string(here(), nums: nums)
-  })
-
+  show math.equation.where(block: true): it => {
+    let fields = it.fields()
+  
+    if "label" in fields {
+      math.equation(
+        block: true,
+        numbering: (..nums) => context {
+          equation-numbering-string(here(), nums: nums)
+        },
+      )[
+        #it.body
+      ]
+    } else {
+      it
+    }
+  }
+    
   // --- Headings ---
   set heading(
-    depth: 6, hanging-indent: 0pt,
+    depth: 6,
+    hanging-indent: 0pt,
     numbering: (..nums) => context { heading-numbering-string(here()) },
   )
   show heading: it => {
     let loc = here()
     let bp = book-part.at(loc)
-
+    
     if bp == "mainmatter" and it.level == 2 {
       chapter-counter.step()
       reset-all-counters()
@@ -536,11 +571,10 @@
       chapter-counter.step()
       reset-all-counters()
     }
-
-    heading-row(book-part: bp, level: it.level,
-      number: heading-numbering-string(loc), title: it.body)
+    
+    heading-row(book-part: bp, level: it.level, number: heading-numbering-string(loc), title: it.body)
   }
-
+  
   // --- Outline ---
   let level-max-width = state("level-max-width", (:))
   context {
@@ -549,7 +583,10 @@
       let hloc = h.location()
       let hnumber = heading-numbering-string(hloc)
       if hnumber != none {
-        let key = book-part.at(hloc) + "|" + str(h.level)
+        let bp = book-part.at(hloc)
+        let cc = chapter-counter.at(hloc).first()
+        let is-chapter = (bp == "mainmatter" and h.level == 2) or (bp == "appendix" and h.level == 1)
+        let key = if is-chapter { bp + "|" + str(h.level) } else { bp + "|" + str(cc) + "|" + str(h.level) }
         let w = measure([#hnumber]).width
         if w > cache.at(key, default: 0em) { cache.insert(key, w) }
       }
@@ -569,7 +606,7 @@
       width-cache: level-max-width.at(loc),
     )
   }
-
+  
   // --- Figures & Tables ---
   show figure.where(kind: table): it => block[
     #set figure.caption(position: top)
@@ -579,7 +616,7 @@
     #text(size: 11pt)[#it.body]
     #v(1em)
   ]
-
+  
   show figure.where(kind: image): it => block[
     #set figure.caption(position: bottom)
     #set par(first-line-indent: 0pt, leading: 1em)
@@ -588,16 +625,16 @@
     #text(weight: "bold")[#it.caption]
     #v(1em)
   ]
-
+  
   set figure(numbering: (..nums) => context {
     figure-numbering-string(here(), figure.kind, nums: nums)
   })
-
+  
   show figure: it => {
     subfigure-counter.update(0)
     it
   }
-
+  
   // --- Lists ---
   show terms: it => {
     set text(size: 11pt)
@@ -607,16 +644,14 @@
   set enum(full: true, numbering: (..nums) => {
     let n = nums.pos()
     let level = n.len()
-    if level == 1 { numbering("1.", n.at(0)) }
-    else if level == 2 { numbering("(1)", n.at(1)) }
-    else if level == 3 { numbering("a.", n.at(2)) }
-    else if level == 4 { numbering("(a)", n.at(3)) }
-    else if level == 5 { numbering("i.", n.at(4)) }
-    else if level == 6 { numbering("(i)", n.at(5)) }
-    else { numbering("1.", n.last()) }
+    if level == 1 { numbering("1.", n.at(0)) } else if level == 2 { numbering("(1)", n.at(1)) } else if level == 3 {
+      numbering("a.", n.at(2))
+    } else if level == 4 { numbering("(a)", n.at(3)) } else if level == 5 { numbering("i.", n.at(4)) } else if (
+      level == 6
+    ) { numbering("(i)", n.at(5)) } else { numbering("1.", n.last()) }
   })
   set list(marker: ([•], [--], [◦]))
-
+  
   // --- References ---
   show ref: it => {
     let el = it.element
@@ -630,21 +665,20 @@
         number = figure-numbering-string(el.location(), el.kind)
       }
     }
-    if number == none { it }
-    else { link(it.target, text(fill: rgb("#0000FF"))[#number]) }
+    if number == none { it } else { link(it.target, text(fill: rgb("#0000FF"))[#number]) }
   }
-
+  
   // --- Bibliography ---
   set bibliography(title: "Bibliography", style: "chicago-author-date")
   show bibliography: it => {
     show link: set text(fill: rgb("#0000FF"))
     it
   }
-
+  
   // --- Citations ---
-  set cite(style: "harvard-cite-them-right")  // elsevier-harvard
+  set cite(style: "harvard-cite-them-right") // elsevier-harvard
   show cite: it => text(fill: rgb("#0000FF"))[#it]
-
+  
   // --- Assemble document ---
   if titlepage { maketitle(title: title, subtitle: subtitle, author: author, date: date) }
   doc
@@ -657,15 +691,15 @@
 
 /// Unnumbered centered sub-heading.
 #let within-section(body) = {
-  v(1em)
   align(center)[#body]
-  v(1em)
 }
 
 /// Diary-style paragraph with no first-line indent.
 #let diary(body) = {
   v(1em)
-  par(first-line-indent: 0em)[#body]
+  par(first-line-indent: 0em)[
+    #text(weight: "bold")[#body]
+  ]
 }
 
 /// Poem block with a left indent.
@@ -675,7 +709,6 @@
 // Music — Mode Wheel (Requires @preview/cetz)
 // ============================================================
 
-#import "@preview/cetz:0.5.2"
 
 /// Draw a circular musical mode wheel highlighting the given scale degrees.
 #let mode-wheel(
@@ -683,6 +716,7 @@
   radius: 2cm,
   label-radius: 2.75cm,
 ) = {
+  import "@preview/cetz:0.5.2"
   let notes = (
     (0, 90, "C"),
     (1, 60, "C♯/D♭"),
