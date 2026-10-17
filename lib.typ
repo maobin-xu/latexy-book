@@ -184,11 +184,15 @@ Changelog:
     else if level == 2 { "Chapter" }
   } else if book-part == "appendix" {
     if level == 1 { "Appendix" }
+  } else {
+    none
   }
   let text-mid = if (book-part == "mainmatter" and level <= 2) or (book-part == "appendix" and level == 1) {
     v(0.25em)
-  } else {
+  } else if (book-part == "mainmatter" and level >= 3) or (book-part == "appendix" and level >= 2) {
     h(0.5em)
+  } else {
+    none
   }
   let spacing-top = if (book-part == "mainmatter" and level == 2) or (book-part != "mainmatter" and level == 1) {
     4em
@@ -197,6 +201,7 @@ Changelog:
     2em
   } else { 1em }
 
+  // Part
   if book-part == "mainmatter" and level == 1 {
     pagebreak(weak: true)
     align(center + horizon)[
@@ -207,7 +212,7 @@ Changelog:
       ]
     ]
     pagebreak(weak: true)
-  } else {
+  } else { // 
     if level == 2 and book-part == "mainmatter" {
       pagebreak(weak: true)
     } else if level == 1 and book-part != "mainmatter" {
