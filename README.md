@@ -4,12 +4,12 @@ A LaTeX-style book template for Typst. Provides part/chapter/section structure,
 frontmatter/mainmatter/appendix/backmatter book parts, theorem environments,
 subfigures, citations, and bibliography.
 
-> **Version:** 0.0.2 · **Updated:** 2026-10-10
+> **Version:** 0.0.3 · **Updated:** 2026-10-17
 
 ## Quick Start
 
 ```typst
-#import "@preview/latexy-book:0.0.2": book, frontmatter, mainmatter, appendix, backmatter
+#import "@preview/latexy-book:0.0.3": book, frontmatter, mainmatter, appendix, backmatter
 
 #show: book.with(
   title: "Book Title",

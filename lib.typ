@@ -1,3 +1,13 @@
+/*
+latexy-book v0.0.3
+
+Changelog:
+- v0.0.3: fix equation numbering
+- v0.0.2: fix quotation
+- v0.0.1: initial version
+*/
+
+
 // ============================================================
 // Title Page
 // ============================================================
@@ -537,22 +547,11 @@
   show smartquote: set text(font: "Libertinus Serif")
 
   // --- Math ---
-  show math.equation.where(block: true): it => {
-    let fields = it.fields()
-  
-    if "label" in fields {
-      math.equation(
-        block: true,
-        numbering: (..nums) => context {
-          equation-numbering-string(here(), nums: nums)
-        },
-      )[
-        #it.body
-      ]
-    } else {
-      it
-    }
-  }
+  show math.equation.where(block: true): set math.equation(
+    numbering: (..nums) => context {
+      equation-numbering-string(here(), nums: nums)
+    },
+  )
     
   // --- Headings ---
   set heading(
