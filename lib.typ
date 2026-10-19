@@ -733,6 +733,26 @@ Changelog:
 // (Not part of the core LaTeX book template; included for convenience.)
 // ============================================================
 
+
+/// Button
+#let button(body, target: none) = {
+  let simple-button = {
+      text(weight: "bold", fill: rgb("#0000FF"))[
+        #body
+      ]
+  } 
+  if target != none {
+    // clickable button
+    link(target, box(
+      stroke: 0pt, radius: 5pt, fill: color.mix((blue,20%), (white,80%)), inset: 7pt,
+    )[#simple-button])
+  } else {  // non-clickable button
+    simple-button
+  }
+}
+
+
+
 /// Unnumbered centered sub-heading.
 #let within-section(body) = {
   align(center)[#body]
