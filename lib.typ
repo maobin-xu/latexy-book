@@ -518,15 +518,40 @@ Changelog:
 // Citations
 // ============================================================
 
-/// Parenthetical citation, similar to LaTeX `\citep{...}`.
-#let citep(..keys) = {
-  for key in keys.pos() { cite(key) }
+/// Parenthetical citation, similar to LaTeX `\citep[prefix]{...}`.
+/// Accepts optional `prefix:` named argument, e.g. `citep(prefix: "e.g.", "key1", "key2")`.
+#let citep(prefix: none, ..keys) = {
+  let pre = if prefix != none { prefix } else { none }
+  let keys = keys.pos()
+  let items = keys.map(k => {
+    text(fill: rgb("#0000FF"))[#cite(k, form: "author")]+", "
+    text(fill: rgb("#0000FF"))[#cite(k, form: "year")]
+  })
+  let body = items.join("; ")
+  [(#pre#body)]
 }
 
 /// Textual / narrative citation, similar to LaTeX `\citet{...}`.
 #let citet(..keys) = {
-  for key in keys.pos() { cite(key, form: "prose") }
+  let keys = keys.pos()
+  let n = keys.len()
+
+  let items = keys.map(k => {
+    text(fill: rgb("#0000FF"), cite(k, form: "author"))
+    [ (]
+    text(fill: rgb("#0000FF"), cite(k, form: "year"))
+    [)]
+  })
+
+  if n == 1 {
+    items.at(0)
+  } else if n == 2 {
+    items.at(0) + " and " + items.at(1)
+  } else {
+    items.slice(0, n - 1).join(", ") + ", and " + items.at(n - 1)
+  }
 }
+
 
 // ============================================================
 // book() — Main Template Entry Point
@@ -720,9 +745,8 @@ Changelog:
   }
   
   // --- Citations ---
-  set cite(style: "harvard-cite-them-right") // elsevier-harvard
-  show cite: it => text(fill: rgb("#0000FF"))[#it]
-  
+  set cite(style: "harvard-cite-them-right") // elsevier-harvard; harvard-cite-them-right; 
+
   // --- Assemble document ---
   if titlepage { maketitle(title: title, subtitle: subtitle, author: author, date: date) }
   doc

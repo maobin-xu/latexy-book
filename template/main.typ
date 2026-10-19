@@ -369,11 +369,16 @@ Original commands:
 Commands defined in `latexy-book`:
 
 // \citep{} in LaTeX
-#citep(<famaCrossSectionExpectedStock1992>,<lamontFinancialConstraintsStock2001>,<chungEffectsAntitrustLaws2024>,)
+#citep(<famaCrossSectionExpectedStock1992>).
+
+#citep(<famaCrossSectionExpectedStock1992>,<lamontFinancialConstraintsStock2001>,<chungEffectsAntitrustLaws2024>,).
 
 // \citet{} in LaTeX
-#citet(<famaCrossSectionExpectedStock1992>,<lamontFinancialConstraintsStock2001>,<chungEffectsAntitrustLaws2024>,)
+#citet(<famaCrossSectionExpectedStock1992>) show ...
 
+#citet(<famaCrossSectionExpectedStock1992>,<lamontFinancialConstraintsStock2001>) show ...
+
+#citet(<famaCrossSectionExpectedStock1992>,<lamontFinancialConstraintsStock2001>,<chungEffectsAntitrustLaws2024>,) show ...
 
 
 
