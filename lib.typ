@@ -330,7 +330,8 @@ Changelog:
   background-color: none,
   header: false,
   lineno: false,
-  show-language: false,
+  language: none,  // for code only
+  show-language: false, // for code only
   leading: 1.5em,
 ) = {
   figure(
@@ -360,18 +361,24 @@ Changelog:
       )[
         #set par(first-line-indent: 0pt, leading: leading, justify: true)
         #if header == true {
-          // language
+          // language 
+          let lang-label = none
           let raw-elem = {
-            if body.func() == raw { body }
-            else if body.has("children") {
+            if body.func() == raw { body } else if body.has("children") {
               let found = body.children.filter(c => c.func() == raw)
               if found.len() > 0 { found.first() } else { none }
             } else { none }
           }
-          let lang-label = ""
-          if show-language == true and raw-elem != none {
-            let lang = raw-elem.lang
-            lang-label = if lang == none { none } else { upper(lang.at(0)) + lang.slice(1) }
+          if show-language == true {
+            if language != none {
+              lang-label = language
+            } else {
+              // infer language from body element
+              if raw-elem != none {
+                let lang = raw-elem.lang
+                lang-label = if lang == none { none } else { upper(lang.at(0)) + lang.slice(1) }
+              }
+            }
           }
           // header
           block(
@@ -398,15 +405,17 @@ Changelog:
               show raw.line: line => box(grid(
                 columns: (lineno-width, 1fr),
                 column-gutter: 0.75em,
-                align: (right+bottom, left+bottom),
+                align: (right + top, left + bottom),
                 text(fill: gray)[#line.number], text[#line.body],
               ))
               body
-            } else { body }
+            } else { 
+              body 
+            }
           ]
         } else {
           // main body
-            block(width: 100%, inset: (x: 0.75em, y: 1em))[
+          block(width: 100%, inset: (x: 0.75em, y: 1em))[
             #text(weight: "bold", fill: black)[#header-text]
             #body
           ]
@@ -489,7 +498,7 @@ Changelog:
   body: body, caption: caption,
   type: "code", type-name: "Code",
   box-color: rgb("#cccccc"), background-color: rgb("#f5f5f5"),
-  header: true, lineno: true, show-language: true, leading: 1em,
+  header: true, lineno: true, language: none, show-language: true, leading: 1em,
   ..args,
 )
 
