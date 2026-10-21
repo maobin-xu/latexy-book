@@ -4,12 +4,12 @@ A LaTeX-style book template for Typst. Provides part/chapter/section structure,
 frontmatter/mainmatter/appendix/backmatter book parts, theorem environments,
 subfigures, citations, and bibliography.
 
-> **Version:** 0.0.3 · **Updated:** 2026-10-17
+> **Version:** 0.0.4 · **Updated:** 2026-10-21
 
 ## Quick Start
 
 ```typst
-#import "@preview/latexy-book:0.0.3": book, frontmatter, mainmatter, appendix, backmatter
+#import "@preview/latexy-book:0.0.4": book, frontmatter, mainmatter, appendix, backmatter
 
 #show: book.with(
   title: "Book Title",
@@ -143,6 +143,7 @@ Optional parameters:
 |-----------|---------|-------------|
 | `caption` | `none` | Caption text shown in the header |
 | `lineno` | `true` | Show line numbers |
+| `language` | `none` | Language of the code block |
 | `show-language` | `true` | Show detected language in the header |
 
 
@@ -173,7 +174,7 @@ resets at each new parent figure.
 
 ## Citations
 
-Harvard author-date style via `citep` (parenthetical) and `citet` (textual):
+Harvard author-date style via `citep` (parenthetical, support `prefix` parameter) and `citet` (textual):
 
 ```typst
 #citep(<famaCrossSectionExpectedStock1992>, <lamontFinancialConstraintsStock2001>)
@@ -182,6 +183,7 @@ Harvard author-date style via `citep` (parenthetical) and `citet` (textual):
 #citet(<famaCrossSectionExpectedStock1992>)
 // → Fama and French (1992)
 ```
+
 
 Bibliography uses Chicago author-date style:
 
@@ -192,10 +194,6 @@ Bibliography uses Chicago author-date style:
 
 ## Tutorial
 
-For more information, see the template file `template/main.typ`.
+For more information, see the template file `template/main.typ`. I strongly recommend you to read it.
 
 
-
-## License
-
-MIT-0

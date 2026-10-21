@@ -1,9 +1,9 @@
-// #import "@preview/latexy-book:0.0.3": book, frontmatter, mainmatter, appendix, backmatter, definition, theorem, assumption, proposition, lemma, corollary, exercise, example, notice, code, citep, citet, subfigure, mode-wheel
-#import "../lib.typ": *
+#import "@preview/latexy-book:0.0.4": book, frontmatter, mainmatter, appendix, backmatter, definition, theorem, assumption, proposition, lemma, corollary, exercise, example, notice, code, citep, citet, subfigure, mode-wheel
+// #import "../lib.typ": *
 /* 
 If you are sure you want to import all the macros and not conflict with other packages, uncomment the line below.
 
-#import "@preview/latexy-book:0.0.3": *
+#import "@preview/latexy-book:0.0.4": *
 */
 #show: book.with(
   title: "Book Title",
@@ -354,6 +354,8 @@ Table @tab:table-1-1, Table @tab:table-1-2, Table @tab:table-2-1, Table @tab:tab
 Figure @fig:figure-1-1, Figure @fig:figure-1-2, Figure @fig:figure-2-1, Figure @fig:figure-2-2, Figure @fig:figure-B-1, Figure @fig:figure-B-2.
 
 
+#button(target:<buttonback:Section>)[To the End]<buttonto:Section>
+
 
 === Citation 
 
@@ -685,6 +687,9 @@ $<eq:equation-B-2>
 
 == Afterword 3
 #lorem(50)
+
+
+#button(target:<buttonto:Section>)[Back]<buttonback:Section>
 
 
 #bibliography("ref.bib")

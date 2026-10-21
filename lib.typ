@@ -1,7 +1,8 @@
 /*
-latexy-book v0.0.3
+latexy-book v0.0.4
 
 Changelog:
+- v0.0.4: fix citation style, 2026-10-21
 - v0.0.3: fix equation numbering
 - v0.0.2: fix quotation
 - v0.0.1: initial version
@@ -42,7 +43,11 @@ Changelog:
 // Book Parts & Counters
 // ============================================================
 
+// State variable tracking which book part we are currently in (default: "mainmatter").
+// Possible values: "mainmatter" | "frontmatter" | "backmatter" | "appendix"
+// Controls page numbering format (roman vs arabic) and heading numbering scheme.
 #let book-part = state("book-part", "mainmatter")
+ 
 #let chapter-counter = counter("chapter-counter")
 
 /// Reset all theorem / figure / equation counters.
@@ -532,10 +537,12 @@ Changelog:
 #let citep(prefix: none, ..keys) = {
   let pre = if prefix != none { prefix } else { none }
   let keys = keys.pos()
+  // Format each citation as "author, year"
   let items = keys.map(k => {
     text(fill: rgb("#0000FF"))[#cite(k, form: "author")]+", "
     text(fill: rgb("#0000FF"))[#cite(k, form: "year")]
   })
+  // Join the citations with "; "
   let body = items.join("; ")
   [(#pre#body)]
 }
@@ -544,14 +551,14 @@ Changelog:
 #let citet(..keys) = {
   let keys = keys.pos()
   let n = keys.len()
-
+  // Format each citation as "author (year)"
   let items = keys.map(k => {
     text(fill: rgb("#0000FF"), cite(k, form: "author"))
     [ (]
     text(fill: rgb("#0000FF"), cite(k, form: "year"))
     [)]
   })
-
+  // Format the citations as a sentence
   if n == 1 {
     items.at(0)
   } else if n == 2 {
