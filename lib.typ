@@ -807,7 +807,10 @@ Changelog:
 }
 
 /// Poem block with a left indent.
-#let poem(body) = block(width: 100%, inset: (left: 2em), body)
+#let poem(body) = block(width: 100%, inset: (left: 2em))[
+  #set par(first-line-indent: 0em)
+  #body
+]
 
 // ============================================================
 // Music — Mode Wheel (Requires @preview/cetz)
