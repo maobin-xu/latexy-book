@@ -1,7 +1,7 @@
 # latexy-book
 
-A LaTeX-style book template for Typst. Provides part/chapter/section structure,
-frontmatter/mainmatter/appendix/backmatter book parts, theorem environments,
+A LaTeX-style book template for Typst. Provides part / chapter / section structure,
+frontmatter / mainmatter / appendix / backmatter book parts, theorem environments,
 subfigures, citations, and bibliography.
 
 > **Version:** 0.0.4 · **Updated:** 2026-10-21
@@ -69,8 +69,7 @@ Closing remarks.
 | `#appendix()` | Appendices, chapters labeled A, B, C... |
 | `#backmatter()` | After appendices (afterword, index, etc.) |
 
-Transitions between parts automatically reset all figure / equation /
-theorem counters so numbering restarts from 1.
+Transitions between parts automatically reset all figure / equation / theorem counters so numbering restarts from 1.
 
 ## Heading Structure
 
@@ -92,8 +91,7 @@ Numbering format:
 
 ## Theorem Environments
 
-All theorem-like environments are rendered as styled boxes with numbered
-captions. Counter resets at each Chapter or Appendix.
+All theorem-like environments are rendered as styled boxes with numbered captions. Counter resets at each Chapter or Appendix.
 
 ```typst
 #theorem(caption: "Pythagorean Theorem")[
@@ -115,14 +113,11 @@ captions. Counter resets at each Chapter or Appendix.
 | `#example(...)` | Example | Gray | Light gray |
 | `#notice(...)` | Notice | Gray | Light gray |
 
-All environments accept a `caption:` parameter (optional) and an optional
-label for cross-referencing (e.g. `<def:my-definition>`).
+All environments accept a `caption:` parameter (optional) and an optional label for cross-referencing (e.g. `<def:my-definition>`).
 
 ## Code
 
-The `#code` environment renders a syntax-highlighted code block with a header
-bar, optional line numbers, and optional language label. It is numbered like
-other theorem environments (1.1, A.1, ...).
+The `#code` environment renders a syntax-highlighted code block with a header bar, optional line numbers, and optional language label. It is numbered like other theorem environments (1.1, A.1, ...).
 
 ````typst
 #code(caption: "Bubble Sort")[
@@ -150,9 +145,7 @@ Optional parameters:
 
 ### Subfigures
 
-Use `#subfigure()` inside a `#figure()` to create labeled sub-figures (a),
-(b), (c), ... Each subfigure is optionally captioned. The subfigure counter
-resets at each new parent figure.
+Use `#subfigure()` inside a `#figure()` to create labeled sub-figures (a), (b), (c), ... Each subfigure is optionally captioned. The subfigure counter resets at each new parent figure.
 
 ```typst
 #figure(
