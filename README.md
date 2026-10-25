@@ -10,6 +10,7 @@ subfigures, citations, and bibliography.
 
 ```typst
 #import "@preview/latexy-book:0.0.4": book, frontmatter, mainmatter, appendix, backmatter
+// #import "@preview/latexy-book:0.0.4": *  // or if you want
 
 #show: book.with(
   title: "Book Title",
